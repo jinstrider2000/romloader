@@ -14,6 +14,7 @@ class RomloaderCli
 
   def list_systems
     GameSystem.all.each_with_index { |game_system, index| puts "#{index+1}. #{game_system.name}"}
+    print "\n"
   end
 
   def select_system(index)
@@ -21,20 +22,20 @@ class RomloaderCli
   end
 
   def list_system_index(selected_system)
-    selected_system.rom
+    selected_system.rom_index_url.keys.each {|letter| print letter + " "}
+    print "\n"
   end
 
-  def select_game_index(letter)
-    
+  def select_game_index(system, letter)
+    system.get_roms_by_letter(letter)
   end
 
-  def list_games(index)
-    
+  def list_games(games,index)
+    games.each_with_index {|game,index| puts "#{index}. #{game.name}"
   end
 
-  def select_game
-    
+  def select_game(game_collection,index)
+    game_collection[index.to_i-1]
   end
-  
   
 end
