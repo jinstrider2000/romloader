@@ -4,15 +4,15 @@ class GameSystem
 
   @@all
   
-  def initialize(name:,rom_url_index: nil)
+  def initialize(name:, rom_url_index: nil)
     @name = name
     @rom_url_index = rom_url_index
-    @roms = []
+    @roms = {}
     @@all << self
   end
 
   def self.create_from_collection(system_array)
-    system_array.each { |game_system| self.new(game_system)}
+    system_array.each { |system_details| self.new(system_details)}
   end
 
   def self.all
@@ -22,5 +22,5 @@ class GameSystem
   def self.destroy_all
     @@all = []
   end
-  
+
 end
