@@ -12,7 +12,7 @@ class FreeromsScraper
         if system_info.text != "Links" && system_info.text != "Flash Games"
           system_name = system_info.text
           system_rom_url = system_info.attribute("href").value
-          game_system << {:name => system_name, :rom_url => rom_index_scrape(system_rom_url)}
+          game_system << {:name => system_name, :rom_url_index => rom_index_scrape(system_rom_url)}
         end
       end
     end
@@ -40,7 +40,6 @@ class FreeromsScraper
         game_url ? game[:download_url] = game_url[0] : game[:download_url] = ""
         game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
       end
-      binding.pry
     end
   end
 
@@ -49,7 +48,7 @@ class FreeromsScraper
     {}.tap do |letter_hash|
       rom_letter_list.each do |letter_list|
         letter = letter_list.text.strip
-        letter_hash[letter] = letter_list.attribute("href").value if letter =~ /\A *[A-Z#]{1} *\Z/
+        letter_hash[letter] = letter_list.attribute("href").value if letter =~ /\A[A-Z#]\Z/
       end
     end
   end
@@ -78,6 +77,3 @@ end
 #   no_links.each { |game| puts game[:name]  }
 #end 
 #-----------------------------------------------------------------------------------------
-
-FreeromsScraper.rom_details("http://www.freeroms.com/dl_roms/rom_download.php?title=ochan_no_oekaki_logic&system=SNES&game_id=28035")
-
