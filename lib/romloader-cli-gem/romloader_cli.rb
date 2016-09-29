@@ -5,6 +5,7 @@ require_relative 'game_system.rb'
 class RomloaderCli
 
   def initialize
+    Dir.mkdir(File.join(Dir.home,"roms")) unless Dir.exist?(File.join(Dir.home,"roms"))
     GameSystem.create_from_collection(FreeromsScraper.system_scrape("http://freeroms.com"))
   end
   
@@ -31,11 +32,17 @@ class RomloaderCli
   end
 
   def list_games(games,index)
-    games.each_with_index {|game,index| puts "#{index}. #{game.name}"
+    games.each_with_index {|game,index| puts "#{index}. #{game.name}"}
+    print "\n"
   end
 
   def select_game(game_collection,index)
     game_collection[index.to_i-1]
+  end
+
+  def input_prompt(message)
+    print message + " "
+    gets.chomp
   end
   
 end
