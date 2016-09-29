@@ -5,7 +5,6 @@ require_relative 'game_system.rb'
 class RomloaderCli
 
   def initialize
-    Dir.mkdir(File.join(Dir.home,"roms")) unless Dir.exist?(File.join(Dir.home,"roms"))
     GameSystem.create_from_collection(FreeromsScraper.system_scrape("http://freeroms.com"))
   end
   
