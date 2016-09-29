@@ -4,8 +4,11 @@ require_relative 'game_system.rb'
 
 class RomloaderCli
 
+  attr_accessor :download_queue
+
   def initialize
     GameSystem.create_from_collection(FreeromsScraper.system_scrape("http://freeroms.com"))
+    self.download_queue = []
   end
   
   def run
@@ -39,9 +42,22 @@ class RomloaderCli
     game_collection[index.to_i-1]
   end
 
-  def input_prompt(message)
-    print message + " "
-    gets.chomp
+  def input_prompt(message,accepted_input_regexp)
+    valid = false
+    input = ""
+    until valid 
+      print message + " "
+      input = gets.chomp =~ accepted_input_regexp ? valid = true : false
+    end
+    input
+  end
+
+  def download_rom(game)
+    puts "Downloading #{game.name} (#{game.size})..."
+    result = Dir.chdir(File.join(Dir.home,"roms")) do
+      system("curl -Og# \"#{url}\"")
+    end
+    result ? print "Finished downloading.\n\n" : print "An error occured, the rom couldn't be downloaded.\n\n"
   end
   
 end
