@@ -13,7 +13,7 @@ class RomloaderCli
     input_stack = []
     control_flow_level = 1
 
-    "Thanks for using RomLoader, powered by freeroms.com!\nConnecting to freeroms.com and retrieving system index...\n"
+    "Thanks for using RomLoader, powered by freeroms.com!\nConnecting to freeroms.com and retrieving the system index...\n"
     while control_flow_level > 0
       case control_flow_level
       when 1
@@ -28,23 +28,22 @@ class RomloaderCli
       when 2
         system = select_system(input_stack[0])
         list_system_index(system)
-        input = input_prompt("Select a letter [back|exit]:", /[#{system.get_rom_indices.join}]/)
+        input = input_prompt("Select a letter [back|exit]:", /[#{system.get_rom_indices.join}]/,control_flow_level)
         control_flow_level = flow_controller(input,control_flow_level,input_stack)
       when 3
         game_collection = select_game_collection_by_index(system,input_stack[0])
         list_games(game_collection)
-        input = input_prompt("Select a game (1-#{game_collection.size}) [back|exit]", 1..game_collection.size)
+        input = input_prompt("Select a game (1-#{game_collection.size}) [back|exit]", 1..game_collection.size,control_flow_level)
         control_flow_level = flow_controller(input,control_flow_level,input_stack)
       when 4
         game = select_game(game_collection,input_stack[0])
         display_rom_details(game)
-        input = input_prompt("Download (y/n) [exit]", /[yn]/)
+        input = input_prompt("Download (y/n) [exit]:", /[yn]/)
         if input == 'y'
           download_rom(game)
-        else
-          input_stack.shift
-          control_flow_level -= 1
         end
+        input_stack.shift
+        control_flow_level -= 1
       end
     end
     puts "Happy Gaming!"
@@ -98,7 +97,7 @@ class RomloaderCli
     puts "NOTE: To uncompress 7-Zip (.7z) files, please download a system compatible version at http://www.7-zip.org/download.html" if game.file_ext == ".7z"
   end
 
-  def input_prompt(message,accepted_input)
+  def input_prompt(message,accepted_input,control_flow_level=nil)
     valid = false
     until valid 
       print message + " "
@@ -107,7 +106,7 @@ class RomloaderCli
         valid = true
       elsif accepted_input.class == Range && /\A\d+\Z/.match(input) && accepted_input.include?(input.to_i)
         valid = true
-      elsif input == "exit" || (input == "back" &&  !(caller[0] =~ /list_systems/) && !(caller[0] =~ /display_rom_details/))
+      elsif input == "exit" || (input == "back" &&  control_flow_level.between?(2,3))
         valid = true
       end
     end
