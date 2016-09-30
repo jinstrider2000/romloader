@@ -2,11 +2,11 @@ class GameSystem
 
   attr_accessor :name, :rom_index_url, :roms
 
-  @@all
+  @@all = []
   
   def initialize(name:, rom_index_url: nil)
     self.name = name
-    self.rom_index_url = rom_url_index
+    self.rom_index_url = rom_index_url
     self.roms = {}
     @@all << self
   end
@@ -28,7 +28,7 @@ class GameSystem
   end
 
   def get_rom_index_url(letter_index)
-    self.rom_url_index[letter_index]
+    self.rom_index_url[letter_index]
   end
 
   def add_roms_to_collection_by_letter(letter_index, game_obj_array)

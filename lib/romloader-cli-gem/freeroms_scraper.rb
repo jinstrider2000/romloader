@@ -12,7 +12,7 @@ class FreeromsScraper
         if system_info.text != "Links" && system_info.text != "Flash Games"
           system_name = system_info.text
           system_rom_url = system_info.attribute("href").value
-          game_system << {:name => system_name, :rom_url_index => rom_index_scrape(system_rom_url)}
+          game_system << {:name => system_name, :rom_index_url => rom_index_scrape(system_rom_url)}
         end
       end
     end
