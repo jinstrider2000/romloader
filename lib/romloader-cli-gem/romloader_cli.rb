@@ -10,10 +10,7 @@ class RomloaderCli
   end
 
   def start
-    input = ""
     input_stack = []
-    selected_system = nil
-    selected_game = nil
     control_flow_level = 1
 
     "Thanks for using RomLoader, powered by freeroms.com!\nConnecting to freeroms.com and retrieving system index...\n"
@@ -21,17 +18,48 @@ class RomloaderCli
       case control_flow_level
       when 1
         list_systems
-        input = input_prompt("Select a system [(1-#{GameSystem.all.size})|(exit)]:",1..GameSystem.all.size)
-        input_stack.unshift(input)
-        control_flow_level += 1 if input != "exit"
+        input = input_prompt("Select a system (1-#{GameSystem.all.size}) [exit]:",1..GameSystem.all.size)
+        if input == "exit"
+          control_flow_level = 0
+        else
+          input_stack.unshift(input)
+          control_flow_level += 1
+        end
       when 2
-        list_system_index(select_system(input))
+        system = select_system(input_stack[0])
+        list_system_index(system)
+        input = input_prompt("Select a letter [back|exit]:", /[#{system.get_rom_indices.join}]/)
+        control_flow_level = flow_controller(input,control_flow_level,input_stack)
       when 3
-      else
-        
+        game_collection = select_game_collection_by_index(system,input_stack[0])
+        list_games(game_collection)
+        input = input_prompt("Select a game (1-#{game_collection.size}) [back|exit]", 1..game_collection.size)
+        control_flow_level = flow_controller(input,control_flow_level,input_stack)
+      when 4
+        game = select_game(game_collection,input_stack[0])
+        display_rom_details(game)
+        input = input_prompt("Download (y/n) [exit]", /[yn]/)
+        if input == 'y'
+          download_rom(game)
+        else
+          input_stack.shift
+          control_flow_level -= 1
+        end
       end
     end
     puts "Happy Gaming!"
+  end
+
+  def flow_controller(input,control_flow_level,input_stack)
+    if input == "exit"
+      0
+    elsif input == "back"
+      input_stack.shift
+      control_flow_level - 1
+    else
+      input_stack.unshift(input)
+      control_flow_level + 1
+    end
   end
 
   def list_systems
@@ -45,11 +73,11 @@ class RomloaderCli
 
   def list_system_index(selected_system)
     puts "#{selected_system.name} index:"
-    selected_system.rom_index_url.keys.each {|letter| print letter + " "}
+    selected_system.get_rom_indices.each {|letter| print letter + " "}
     print "\n"
   end
 
-  def select_game_index(system, letter)
+  def select_game_collection_by_index(system, letter)
     puts "Loading roms...\n"
     games_list = system.get_roms_by_letter(letter)
     games_list ||= system.add_roms_to_collection_by_letter(letter,GameRom.create_collection(FreeromsScraper.rom_scrape(system.get_rom_index_url(letter))))
@@ -79,7 +107,7 @@ class RomloaderCli
         valid = true
       elsif accepted_input.class == Range && /\A\d+\Z/.match(input) && accepted_input.include?(input.to_i)
         valid = true
-      elsif input == "exit" || (input == "b" &&  !(caller[0] =~ /list_systems/) && !(caller[0] =~ /display_rom_details/))
+      elsif input == "exit" || (input == "back" &&  !(caller[0] =~ /list_systems/) && !(caller[0] =~ /display_rom_details/))
         valid = true
       end
     end

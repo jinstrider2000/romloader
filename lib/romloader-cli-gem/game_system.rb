@@ -31,6 +31,10 @@ class GameSystem
     self.rom_index_url[letter_index]
   end
 
+  def get_rom_indices
+    self.rom_index_url.keys
+  end
+
   def add_roms_to_collection_by_letter(letter_index, game_obj_array)
     game_obj_array.each { |game| game.system = self }
     self.roms[letter_index] = game_obj_array
