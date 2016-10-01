@@ -24,7 +24,8 @@ class FreeromsScraper
       game_list.each do |game_info|
         download_link = game_info.css("a").attribute("href").value
         download_link.gsub!(/[[:space:]]/) {|white_space| CGI::escape(white_space)} unless download_link.ascii_only?
-        rom_list << rom_details(download_link)
+        rom_info = rom_details(download_link)
+        rom_list <<  rom_info unless rom_info.empty?
       end 
     end
   end
@@ -32,13 +33,25 @@ class FreeromsScraper
   def self.rom_details(url)
     direct_download = Nokogiri::HTML(open(url))
     {}.tap do |game|
-      unless direct_download.css("td#rom > script").empty?
+      unless direct_download.css("td#romss > script").empty?
         game_name = direct_download.css("tr.gametitle > td[colspan=\"2\"]").text
-        game_name.gsub!(/[[:space:]]{2,}/) {|white_spaces| " "}
-        game_url = /http:\/\/.+(\.zip|\.7z)/.match(direct_download.css("td#rom > script").first.children.first.text)
+        game_name = "N/A" if game_name == ""
         game[:name] = game_name
-        game_url ? game[:download_url] = game_url[0] : game[:download_url] = ""
-        game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
+        game_name.gsub!(/[[:space:]]{2,}/) {|white_spaces| " "}
+        begin
+          game_url = /http:\/\/.+(\.zip|\.7z)/.match(direct_download.css("td#romss > script").first.children.first.text)
+        rescue NoMethodError => error
+          game.clear
+        else
+          if game_url
+            game[:download_url] = game_url[0]
+            begin
+              game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
+            rescue NoMethodError => error
+              game[:size] = "N/A"
+            end    
+          end      
+        end
       end
     end
   end
@@ -57,7 +70,7 @@ class FreeromsScraper
 end
 
 # Test: To see if freeroms.com site can be completely scraped and all roms have complete info.
-# Results: Every rom collected, except Neo Geo Pocket game "Faselei! French"
+# Results: Every rom collected, even ones that you can't download normally through website (i.e. Balloon Fight for NES, or Faselei! French for NeoGeo Pocket)
 #----------------------------------------------------------------------------------------        
 #full_game_list = []
 #

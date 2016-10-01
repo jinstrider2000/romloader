@@ -1,3 +1,5 @@
+require "pry"
+
 class GameSystem
 
   attr_accessor :name, :rom_index_url, :roms

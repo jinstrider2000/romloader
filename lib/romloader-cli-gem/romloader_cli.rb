@@ -13,7 +13,7 @@ class RomloaderCli
     input_stack = []
     control_flow_level = 1
 
-    "Thanks for using RomLoader, powered by freeroms.com!\nConnecting to freeroms.com and retrieving the system index...\n"
+    puts "Thanks for using RomLoader, powered by freeroms.com!\nConnecting to freeroms.com and retrieving the system index...\n\n"
     while control_flow_level > 0
       case control_flow_level
       when 1
@@ -43,7 +43,7 @@ class RomloaderCli
           download_rom(game)
         end
         input_stack.shift
-        control_flow_level -= 1
+        input == "exit" ? control_flow_level = 0 : control_flow_level -= 1
       end
     end
     puts "Happy Gaming!"
@@ -73,7 +73,7 @@ class RomloaderCli
   def list_system_index(selected_system)
     puts "#{selected_system.name} index:"
     selected_system.get_rom_indices.each {|letter| print letter + " "}
-    print "\n"
+    puts "\n\n"
   end
 
   def select_game_collection_by_index(system, letter)
@@ -95,6 +95,7 @@ class RomloaderCli
     puts "Rom details:"
     puts "#{game.name} | File size: #{game.size} | File type: #{game.file_ext}"
     puts "NOTE: To uncompress 7-Zip (.7z) files, please download a system compatible version at http://www.7-zip.org/download.html" if game.file_ext == ".7z"
+    print "\n"
   end
 
   def input_prompt(message,accepted_input,control_flow_level=nil)
@@ -106,10 +107,11 @@ class RomloaderCli
         valid = true
       elsif accepted_input.class == Range && /\A\d+\Z/.match(input) && accepted_input.include?(input.to_i)
         valid = true
-      elsif input == "exit" || (input == "back" &&  control_flow_level.between?(2,3))
+      elsif input == "exit" || (input == "back" &&  control_flow_level && control_flow_level.between?(2,3))
         valid = true
       end
     end
+    print "\n"
     input
   end
 
@@ -119,6 +121,8 @@ class RomloaderCli
       system("curl -Og# \"#{game.download_url}\"")
     end
     result ? puts("Finished downloading to #{File.join(Dir.home,"videogame_roms")}.\n") : puts("An error occured, the rom couldn't be downloaded.\n")
+    sleep 3
+    puts "\n"
   end
   
 end

@@ -1,3 +1,5 @@
+require 'pry'
+
 class GameRom
 
   attr_accessor :name, :download_url, :size, :file_ext, :system
@@ -11,6 +13,7 @@ class GameRom
   end
 
   def self.create_collection(game_array)
+    
     game_array.collect do |game_details| 
       self.new(game_details)
     end
