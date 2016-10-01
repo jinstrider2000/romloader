@@ -36,14 +36,14 @@ class FreeromsScraper
       unless direct_download.css("td#romss > script").empty?
         game_name = direct_download.css("tr.gametitle > td[colspan=\"2\"]").text
         game_name = "N/A" if game_name == ""
-        game[:name] = game_name
         game_name.gsub!(/[[:space:]]{2,}/) {|white_spaces| " "}
         begin
           game_url = /http:\/\/.+(\.zip|\.7z)/.match(direct_download.css("td#romss > script").first.children.first.text)
         rescue NoMethodError => error
-          game.clear
+          #Do Nothing, catch the error and move on. This is fine, because the hash will be empty and not added to the array being compiled in #rom_scape
         else
           if game_url
+            game[:name] = game_name
             game[:download_url] = game_url[0]
             begin
               game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
@@ -69,8 +69,8 @@ class FreeromsScraper
   private_class_method :rom_index_scrape
 end
 
-# Test: To see if freeroms.com site can be completely scraped and all roms have complete info.
-# Results: Every rom collected, even ones that you can't download normally through website (i.e. Balloon Fight for NES, or Faselei! French for NeoGeo Pocket)
+# Test Sequence: To see if freeroms.com site can be completely scraped and that all roms have complete info.
+# Results: Every rom collected, even ones that you can't download normally through website! (i.e. Balloon Fight for NES, or Faselei! French for NeoGeo Pocket)
 #----------------------------------------------------------------------------------------        
 #full_game_list = []
 #
