@@ -3,4 +3,4 @@
 Specs:
 - [x] Have a CLI for interfacing with the application *(provided in bin/romloader)*
 - [x] Pull data from an external source *(gem scrapes http://freeroms.com)*
-- [x] Implement both list and detail views *(gem goes down **4** levels of detail)*
+- [x] Implement both list and detail views *(gem goes down 4 levels of detail)*
