@@ -8,6 +8,7 @@ class RomloaderCli
 
   def initialize
     GameSystem.create_from_collection(FreeromsScraper.system_scrape("http://freeroms.com"))
+    raise ScrapingError::NoElementFound.exception("System index is currently unavailable. Exiting the program.") if GameSystem.all.size == 0
   end
 
   def start
@@ -56,12 +57,8 @@ class RomloaderCli
         input == "exit" ? control_flow_level = 0 : control_flow_level -= 1
       end
     end
-
-    if GameSystem.all.size > 0
-      puts "Happy Gaming!"
-    else
-      raise ScrapingError::NoElementFound.exception("System index is currently unavailable. Exiting the program.")
-    end
+    
+    puts "Happy Gaming!"
     
   end
 
