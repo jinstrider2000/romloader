@@ -93,7 +93,7 @@ class RomloaderCli
   end
 
   def select_game_collection_by_index(system, letter)
-    puts "Loading roms...\n"
+    puts "Loading roms, this could take a while...\n"
     games_list = system.get_roms_by_letter(letter)
     games_list ||= system.add_roms_to_collection_by_letter(letter,GameRom.create_collection(FreeromsScraper.rom_scrape(system.get_rom_index_url(letter))))
   end
