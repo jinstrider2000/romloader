@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+bundle install
+
+# I stole this from the worlds-best-restaurants-cli-gem located at "https://github.com/dannyd4315/worlds-best-restaurants-cli-gem"
+

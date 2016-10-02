@@ -1,4 +1,4 @@
-require_relative 'romloader-cli-gem/romloader_cli.rb'
+require_relative 'romloader/romloader_cli.rb'
 require 'pry'
 
 def run

@@ -1,6 +1,7 @@
 require_relative 'freeroms_scraper.rb'
 require_relative 'game_rom.rb'
 require_relative 'game_system.rb'
+require_relative 'scraping_error/no_element_found.rb'
 require 'pry'
 
 class RomloaderCli
@@ -14,7 +15,7 @@ class RomloaderCli
     control_flow_level = 1
 
     puts "Thanks for using RomLoader, powered by freeroms.com!\nConnecting to freeroms.com and retrieving the system index...\n\n"
-    while control_flow_level > 0
+    while control_flow_level > 0 && GameSystem.all.size > 0
       case control_flow_level
       when 1
         list_systems
@@ -28,13 +29,22 @@ class RomloaderCli
       when 2
         system = select_system(input_stack[0])
         list_system_index(system)
-        input = input_prompt("Select a letter [back|exit]:", /[#{system.get_rom_indices.join}]/,control_flow_level)
+        input = input_prompt("Select a letter [back|exit]:", /[#{system.get_rom_indices.join.downcase}]/,control_flow_level)
         control_flow_level = flow_controller(input,control_flow_level,input_stack)
       when 3
-        game_collection = select_game_collection_by_index(system,input_stack[0])
-        list_games(game_collection)
-        input = input_prompt("Select a game (1-#{game_collection.size}) [back|exit]", 1..game_collection.size,control_flow_level)
-        control_flow_level = flow_controller(input,control_flow_level,input_stack)
+        game_collection = select_game_collection_by_index(system,input_stack[0].upcase)
+        if game_collection.empty?
+          begin
+            raise ScrapingError::NoElementFound.exception("Requested game index is currently unavailable. Try another one.")
+          rescue
+            control_flow_level -= 1
+            input_stack.shift
+          end
+        else
+          list_games(game_collection)
+          input = input_prompt("Select a game (1-#{game_collection.size}) [back|exit]", 1..game_collection.size,control_flow_level)
+          control_flow_level = flow_controller(input,control_flow_level,input_stack)
+        end
       when 4
         game = select_game(game_collection,input_stack[0])
         display_rom_details(game)
@@ -46,7 +56,13 @@ class RomloaderCli
         input == "exit" ? control_flow_level = 0 : control_flow_level -= 1
       end
     end
-    puts "Happy Gaming!"
+
+    if GameSystem.all.size > 0
+      puts "Happy Gaming!"
+    else
+      raise ScrapingError::NoElementFound.exception("System index is currently unavailable. Exiting the program.")
+    end
+    
   end
 
   def flow_controller(input,control_flow_level,input_stack)
@@ -102,7 +118,7 @@ class RomloaderCli
     valid = false
     until valid 
       print message + " "
-      input = gets.chomp.strip
+      input = gets.chomp.strip.downcase
       if accepted_input.class == Regexp && accepted_input.match(input)
         valid = true
       elsif accepted_input.class == Range && /\A\d+\Z/.match(input) && accepted_input.include?(input.to_i)
