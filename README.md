@@ -25,6 +25,11 @@ This will download any dependencies for development. Rspec is among the dependen
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/jinstrider2000/romloader-cli-gem.
 
+## Version Changes
+
+v. 1.0: Changed the namespacing of classes, added zip/7-zip extraction and rom download directory management. Also, added the ability to open the newly downloaded game from the command line (requires a emulator)
+
+v. 0.0: Basic rom listing from Freeroms.com, and rom download feature
 
 ## License
 
