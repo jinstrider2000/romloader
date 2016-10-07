@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name = 'romloader'
-  spec.version = '0.0.0'
-  spec.date = '2016-10-01'
+  spec.version = '1.0.0'
+  spec.date = '2016-10-07'
   spec.summary = 'A videogame rom downloader powered by freeroms.com!'
   spec.description = "This gem allows you to convieniently download videogame roms from freeroms.com to your home directory."
   spec.author = ["Efrain Perez Jr"]
@@ -13,6 +13,9 @@ Gem::Specification.new do |spec|
   spec.executables << 'romloader'
   spec.license = 'MIT'
   spec.add_runtime_dependency 'nokogiri', '~> 1.6'
+  spec.add_runtime_dependency 'rubyzip', '~> 1.2'
+  spec.add_runtime_dependency 'seven_zip_ruby', '~> 1.2'
+  spec.add_runtime_dependency 'fileutils', '~> 0.7'
   spec.add_development_dependency 'bundler', '~> 1.12'
   spec.add_development_dependency 'pry', '~> 0.10'
   spec.add_development_dependency 'rspec', '~> 3.1'

@@ -1,20 +1,9 @@
-require 'open-uri'
-require 'nokogiri'
-require 'cgi'
 
 # The class which facilitates scraping freeroms.com. Uses the nokogiri gem to scrape the site
-class FreeromsScraper
-  # Class Variables: none
-  #
-  # Instance Variables: none
-
-  # Purpose: To retrieve the names and main rom urls of the game systems currently begin served by freeroms.com.  Returns this information in the form of an array of hashes
+class RomLoader::FreeromsScraper
+  
   def self.system_scrape(url)
-    # Arguments:
-    # => 1. url (String): Contains the url "http://freeroms.com"
-    #
-    # Return:
-    # => Array<Hash>
+    
     system_list = Nokogiri::HTML(open(url)).css("dt.leftside > a")
     [].tap do |game_system|
       system_list.each do |system_info|
@@ -32,13 +21,9 @@ class FreeromsScraper
     end
   end
   
-  # Purpose: To retrieve the names and main rom urls of the individual games currently begin served by freeroms.com.  Returns this information in the form of an array of hashes
+  # To retrieve the names and main rom urls of the individual games currently begin served by freeroms.com.  Returns this information in the form of an array of hashes
   def self.rom_scrape(url)
-    # Arguments:
-    # => 1. url (String): Contains the url for each game
-    #
-    # Return:
-    # => Array<Hash>
+    
     game_list = Nokogiri::HTML(open(url)).css("tr[class^=\"game\"] > td[align=\"left\"]")
     [].tap do |rom_list|
       game_list.each do |game_info|
@@ -58,13 +43,9 @@ class FreeromsScraper
     end
   end
 
-  # Purpose: To retrieve the detailed information of individual games currently begin served by freeroms.com.  Returns this information in the form of a hash
+  # To retrieve the detailed information of individual games currently begin served by freeroms.com.  Returns this information in the form of a hash
   def self.rom_details(url)
-    # Arguments:
-    # => 1. url (String): Contains the url for each game
-    #
-    # Return:
-    # => Hash
+    
     direct_download = Nokogiri::HTML(open(url))
     {}.tap do |game|
       unless direct_download.css("td#romss > script").empty?
@@ -77,6 +58,7 @@ class FreeromsScraper
           if game_url
             game[:download_url] = game_url[0]
             game[:file_ext] = game_url[1]
+            game[:filename] = /[.[^\/]]+(\.zip|\.7z)\Z/.match(game_url[0])[0]
             begin
               game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
             rescue NoMethodError
@@ -90,11 +72,7 @@ class FreeromsScraper
 
   # Purpose: To retrieve the letter indices for the roms of the game systems currently begin served by freeroms.com.  Returns this information in the form of a hash
   def self.rom_index_scrape(url)
-    # Arguments:
-    # => 1. url (String): Contains the url for the letter indices
-    #
-    # Return:
-    # => Hash
+    
     rom_letter_list = Nokogiri::HTML(open(url)).css("tr.letters > td[align=\"center\"] > font > a")
     {}.tap do |letter_hash|
       rom_letter_list.each do |letter_list|
