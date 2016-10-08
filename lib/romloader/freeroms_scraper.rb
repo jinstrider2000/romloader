@@ -12,7 +12,7 @@ class RomLoader::FreeromsScraper
           begin
             system_rom_url = system_info.attribute("href").value
           rescue NoMethodError
-            #Do Nothing, catch the error and move on. This is fine, because the hash will not be added to the array being compiled.
+            
           else
             game_system << {name: system_name, rom_index_url: system_rom_url}
           end
@@ -21,7 +21,8 @@ class RomLoader::FreeromsScraper
     end
   end
   
-  # To retrieve the names and main rom urls of the individual games currently begin served by freeroms.com.  Returns this information in the form of an array of hashes
+  # To retrieve the names and main rom urls of the individual games currently begin served by freeroms.com.
+  # Returns this information in the form of an array of hashes
   def self.rom_scrape(url)
     
     game_list = Nokogiri::HTML(open(url)).css("tr[class^=\"game\"] > td[align=\"left\"]")
@@ -30,7 +31,7 @@ class RomLoader::FreeromsScraper
         begin
           download_link = game_info.css("a").attribute("href").value
         rescue NoMethodError
-          #Do Nothing, catch the error and move on. This is fine, because the hash will not be added to the array being compiled. 
+          
         else
           game_name = game_info.css("span").text
           unless game_name == ""
@@ -43,7 +44,8 @@ class RomLoader::FreeromsScraper
     end
   end
 
-  # To retrieve the detailed information of individual games currently begin served by freeroms.com.  Returns this information in the form of a hash
+  # To retrieve the detailed information of individual games currently begin served by freeroms.com.
+  # Returns this information in the form of a hash
   def self.rom_details(url)
     
     direct_download = Nokogiri::HTML(open(url))
@@ -53,7 +55,7 @@ class RomLoader::FreeromsScraper
         begin
           game_url = /http:\/\/.+(\.zip|\.7z)/.match(direct_download.css("td#romss > script").first.children.first.text)
         rescue NoMethodError
-          #Do Nothing, catch the error and move on. This is fine, because the hash will be empty, which can be handled by GameRom#set_rom_details
+          
         else
           if game_url
             game[:download_url] = game_url[0]
@@ -70,7 +72,8 @@ class RomLoader::FreeromsScraper
     end
   end
 
-  # Purpose: To retrieve the letter indices for the roms of the game systems currently begin served by freeroms.com.  Returns this information in the form of a hash
+  # To retrieve the letter indices for the roms of the game systems currently begin served by freeroms.com.
+  # Returns this information in the form of a hash
   def self.rom_index_scrape(url)
     
     rom_letter_list = Nokogiri::HTML(open(url)).css("tr.letters > td[align=\"center\"] > font > a")
@@ -80,7 +83,7 @@ class RomLoader::FreeromsScraper
         begin
           letter_hash[letter] = letter_list.attribute("href").value if letter =~ /\A[A-Z#]\Z/
         rescue NoMethodError
-          #Do Nothing, catch the error and move on. This is fine, because the hash pair will not added.
+
         end
       end
     end

@@ -12,7 +12,7 @@ class RomLoader::RomLoaderCli
     input_stack = []
     control_flow_level = 1
 
-    puts "Thanks for using RomLoader, powered by freeroms.com!\nNOTE: To play these games, please download an emulator for the desired system.\nConnecting to freeroms.com and retrieving the systems index...\n\n"
+    puts "Thanks for using RomLoader, powered by freeroms.com!\nNOTE: To play the games, please download an emulator for the desired system.\nConnecting to freeroms.com and retrieving the systems index...\n\n"
     sleep 3
     while control_flow_level > 0 
       case control_flow_level
@@ -97,7 +97,8 @@ class RomLoader::RomLoaderCli
     end
   end
 
-  # Lists the game systems scraped from http://freeroms.com and saved in Romloader::GameSystem.all (e.g. 1. Amiga, 2. Atari, etc...)
+  # Lists the game systems scraped from http://freeroms.com and saved in Romloader::GameSystem.all
+  # (e.g. 1. Amiga, 2. Atari, etc...)
   def list_systems 
     RomLoader::GameSystem.all.each_with_index { |game_system, index| puts "#{index+1}. #{game_system.name}"}
     print "\n"
@@ -108,7 +109,8 @@ class RomLoader::RomLoaderCli
     RomLoader::GameSystem.all[index-1]
   end
 
-  # List game index for the selected system by letter (e.g. A B C D...)
+  # List game index for the selected system by letter
+  # (e.g. A B C D...)
   def list_system_index(selected_system)
     if selected_system.get_rom_indices.empty?
       selected_system.rom_indices = RomLoader::FreeromsScraper.rom_index_scrape(selected_system.rom_index_url)
@@ -119,14 +121,16 @@ class RomLoader::RomLoaderCli
     puts "\n\n"
   end
 
-  # Retrieves all the games available for the selected system under the selected index (e.g. NES,"G")
+  # Retrieves all the games available for the selected system under the selected index
+  # (e.g. NES,"G")
   def select_game_collection_by_index(system, letter)
     puts "Loading roms...\n"
     games_list = system.get_roms_by_letter(letter)
     games_list ||= system.add_roms_to_collection_by_letter(letter,RomLoader::GameRom.create_collection(RomLoader::FreeromsScraper.rom_scrape(system.get_rom_collection_url(letter))))
   end
 
-  # List all the games available for the selected index (e.g. "S": 1. Super Castlevania, 2. Super Mario World, etc...)
+  # List all the games available for the selected index
+  # (e.g. "S": 1. Super Castlevania, 2. Super Mario World, etc...)
   def list_games(games)
     games.each_with_index {|game,index| puts "#{index+1}. #{game.name}"}
     print "\n"
@@ -138,7 +142,8 @@ class RomLoader::RomLoaderCli
     game_collection[index-1]
   end
 
-  # List the details of the selected game (e.g. Chrono Trigger | 5.38 MB | .zip)
+  # List the details of the selected game
+  # (e.g. Chrono Trigger | SNES | 5.38 MB | .zip)
   def display_rom_details(game)
     puts "Rom details:"
     puts "#{game.name} | System: #{game.system.name} | File size: #{game.size} | File type: #{game.file_ext}"
@@ -178,7 +183,7 @@ class RomLoader::RomLoaderCli
     else
       puts "An error occured, the rom couldn't be downloaded.\n"
     end
-    sleep 3
+    sleep 2
     puts "\n"
     file_or_dir_to_open
   end
