@@ -67,13 +67,19 @@ class RomLoader::RomLoaderCli
           input = input_prompt("Download? (Y/n) [exit]:", /[yn]/, control_flow_level)
           if input == 'y' || input == ""
             file_or_dir_to_open = download_rom(game)
-            if /\".+\"/.match(file_or_dir_to_open)
-              game_file = /\".+\"/.match(file_or_dir_to_open)[0]
-              input = input_prompt("Play #{game_file}? (Y/n) [exit]:", /[yn]/,control_flow_level)
-            else
-              input = input_prompt("Open #{file_or_dir_to_open}? (Y/n) [exit]:", /[yn]/,control_flow_level)
-            end
-            system("open #{file_or_dir_to_open}") if input == 'y' || input == ""
+            if file_or_dir_to_open
+              if /\".+\"/.match(file_or_dir_to_open)
+                game_file = /\".+\"/.match(file_or_dir_to_open)[0]
+                input = input_prompt("Play #{game_file}? (Y/n) [exit]:", /[yn]/,control_flow_level)
+              else
+                input = input_prompt("Open #{file_or_dir_to_open}? (Y/n) [exit]:", /[yn]/,control_flow_level)
+              end
+              if isWindows?
+                system("powershell -command \"& { Invoke-Item #{file_or_dir_to_open}\"")
+              else
+                system("open #{file_or_dir_to_open}") if input == 'y' || input == ""
+              end
+            end 
           end
           input_stack.shift
           input == "exit" ? control_flow_level = 0 : control_flow_level -= 1
@@ -172,11 +178,20 @@ class RomLoader::RomLoaderCli
     input
   end
 
+  def isWindows?
+    /cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM
+  end
+
   # Downloads the selected game to the local directory (~/videogame_roms)
   def download_rom(game)
-    file_or_dir_to_open = ""
+    file_or_dir_to_open = nil
     puts "Downloading #{game.name} (#{game.size})..."
-    result = Dir.chdir(File.join(Dir.home,"videogame_roms")) { system("curl -Og# \"#{game.download_url}\"") }
+    if isWindows?
+      result = Dir.chdir(File.join(Dir.home,"videogame_roms")) { system("powershell -command \"& { Invoke-WebRequest \"#{game.download_url}\" -OutFile \"#{game.filename}\" }\"") }
+    else
+      result = Dir.chdir(File.join(Dir.home,"videogame_roms")) { system("curl -Og# \"#{game.download_url}\"") }
+    end
+    
     if result == true 
       puts "Finished downloading #{game.filename} to #{File.join(Dir.home,"videogame_roms")}.\n"
       file_or_dir_to_open = RomLoader::ArchiveExtractor.extract(File.join(Dir.home,"videogame_roms",game.filename),game)
