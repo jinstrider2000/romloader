@@ -74,11 +74,7 @@ class RomLoader::RomLoaderCli
               else
                 input = input_prompt("Open #{file_or_dir_to_open}? (Y/n) [exit]:", /[yn]/,control_flow_level)
               end
-              if isWindows?
-                system("powershell -command \"& { Invoke-Item #{file_or_dir_to_open}\"")
-              else
                 system("open #{file_or_dir_to_open}") if input == 'y' || input == ""
-              end
             end 
           end
           input_stack.shift
@@ -187,14 +183,14 @@ class RomLoader::RomLoaderCli
     file_or_dir_to_open = nil
     puts "Downloading #{game.name} (#{game.size})..."
     if isWindows?
-      result = Dir.chdir(File.join(Dir.home,"videogame_roms")) { system("powershell -command \"& { Invoke-WebRequest \"#{game.download_url}\" -OutFile \"#{game.filename}\" }\"") }
+      result = Dir.chdir(File.join(Dir.home,"videogame_roms")) { system("powershell -command \"& { Invoke-WebRequest '#{game.download_url}' -OutFile '#{game.filename}' }\"") }
     else
       result = Dir.chdir(File.join(Dir.home,"videogame_roms")) { system("curl -Og# \"#{game.download_url}\"") }
     end
     
     if result == true 
       puts "Finished downloading #{game.filename} to #{File.join(Dir.home,"videogame_roms")}.\n"
-      file_or_dir_to_open = RomLoader::ArchiveExtractor.extract(File.join(Dir.home,"videogame_roms",game.filename),game)
+      file_or_dir_to_open = RomLoader::ArchiveExtractor.extract(File.join(Dir.home,"videogame_roms",game.filename),game) unless isWindows?
     else
       puts "An error occured, the rom couldn't be downloaded.\n"
     end
