@@ -195,7 +195,6 @@ class RomLoader::RomLoaderCli
       puts "An error occured, the rom couldn't be downloaded.\n"
     end
     sleep 2
-    puts "\n"
     file_or_dir_to_open
   end
   
