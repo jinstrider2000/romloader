@@ -3,7 +3,7 @@ class RomLoader::ArchiveExtractor
 
   #Extracts zip or 7-zip rom files, manages the extracted dirs, then deletes archive files
   def self.extract(dir,game_obj)
-    file_or_dir_to_open = ""
+    file_or_dir_to_open = nil
     /(?<=\().+(?=\))/.match(game_obj.system.name) ? system_name = /(?<=\().+(?=\))/.match(game_obj.system.name)[0] : system_name = nil
     system_name ||= game_obj.system.name
     system_name = system_name.rstrip.gsub(/[[[:space:]]\/]/, "_").downcase
@@ -27,7 +27,7 @@ class RomLoader::ArchiveExtractor
             zip_archive.size == 1 ? file_or_dir_to_open = File.join(dir_w_system,"\"#{rom.name}\"") : file_or_dir_to_open = File.join(dir_w_system,dir_game_name)
           end
         end
-      else
+      elsif game_obj.file_ext == ".7z"
         File.open(dir, "rb") do |seven_zip_archive|
           SevenZipRuby::Reader.open(seven_zip_archive) do |szr|
             if szr.entries.size > 2
@@ -47,7 +47,11 @@ class RomLoader::ArchiveExtractor
       File.delete(dir)
       file_or_dir_to_open
     else
-      puts "NOTE: No archive extraction. MAME roms must remain zipped to play."
+      if game_obj.system.name == "MAME"
+        puts "NOTE: No archive extraction. MAME roms must remain zipped to play."
+      else
+        puts "NOTE: No archive extraction. Only Zip and 7-Zip extraction is supported."
+      end
       FileUtils.move dir, dir_w_system
       file_or_dir_to_open = dir_w_system
     end
