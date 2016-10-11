@@ -1,11 +1,13 @@
 
-# The class whose instances represent an individual game rom (e.g. Chrono Trigger object)
+# The class whose instances represent an individual game rom
+# (e.g. Chrono Trigger object)
 class RomLoader::GameRom
   
   attr_accessor :name, :system
   attr_reader :rom_detail_url ,:download_url, :size, :file_ext, :filename
 
-  # Create individual game rom objects from information scraped from freeroms.com, and sets the required name and rom_detail_url instance variables
+  # Create individual game rom objects from information scraped from freeroms.com,
+  # then sets the required name and rom_detail_url instance variables
   def initialize(name:, rom_detail_url:)
     @name = name
     @rom_detail_url = rom_detail_url

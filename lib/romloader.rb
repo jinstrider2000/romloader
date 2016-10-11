@@ -5,8 +5,10 @@ end
 require 'open-uri'
 require 'nokogiri'
 require 'cgi'
-require 'zip'
-require 'seven_zip_ruby'
+unless /cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM
+  require 'zip'
+  require 'seven_zip_ruby'
+end
 require 'fileutils'
 require_relative 'romloader/game_rom.rb'
 require_relative 'romloader/game_system.rb'
