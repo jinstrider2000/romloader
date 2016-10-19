@@ -195,11 +195,11 @@ class RomLoader::RomLoaderCli
         result = Dir.chdir(extract_dir) { system("curl -Og# \"#{game.download_url}\"") }
       end
 
-      if result && !isWindows? && game_obj.system.name != "MAME"
+      if result && !isWindows? && game.system.name != "MAME"
         puts "Finished downloading #{game.filename} to #{extract_dir}. Extracting..."
         file_or_dir_to_open = RomLoader::ArchiveExtractor.extract(File.join(extract_dir,game.filename),extract_dir,game)
         RomLoader::ArchiveExtractor.delete_archive(File.join(extract_dir,game.filename))
-      elsif result && !isWindows? && game_obj.system.name == "MAME"
+      elsif result && !isWindows? && game.system.name == "MAME"
         puts "Finished downloading #{game.filename} to #{extract_dir}."
         puts "NOTE: No archive extraction. MAME roms must remain zipped to play."
         file_or_dir_to_open = extract_dir
