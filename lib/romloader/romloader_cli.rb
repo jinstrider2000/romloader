@@ -196,17 +196,21 @@ class RomLoader::RomLoaderCli
       end
 
       if result && !isWindows? && game_obj.system.name != "MAME"
+        puts "Finished downloading #{game.filename} to #{extract_dir}. Extracting..."
         file_or_dir_to_open = RomLoader::ArchiveExtractor.extract(File.join(extract_dir,game.filename),extract_dir,game)
+        RomLoader::ArchiveExtractor.delete_archive(File.join(extract_dir,game.filename))
       elsif result && !isWindows? && game_obj.system.name == "MAME"
+        puts "Finished downloading #{game.filename} to #{extract_dir}."
         puts "NOTE: No archive extraction. MAME roms must remain zipped to play."
         file_or_dir_to_open = extract_dir
       elsif result && isWindows?
+        puts "Finished downloading #{game.filename} to #{extract_dir}."
         file_or_dir_to_open = extract_dir
       else
-        puts "An error occured, the rom couldn't be downloaded.\n"
+        puts "An error occured, the rom couldn't be downloaded.\n\n"
       end
     else
-      puts "File already exists."
+      puts "File already exists.\n\n"
     end
 
     sleep 2
