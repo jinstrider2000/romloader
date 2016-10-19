@@ -70,17 +70,16 @@ class RomLoader::RomLoaderCli
             if file_or_dir_to_open
               if /\".+\"/.match(file_or_dir_to_open)
                 game_file = /\".+\"/.match(file_or_dir_to_open)[0]
-                input = input_prompt("Play #{game_file}? (Y/n) [exit]:", /[yn]/,control_flow_level)
+                input = input_prompt("Play #{game_file}? (y/N) [exit]:", /[yn]/,control_flow_level)
               else
-                input = input_prompt("Open #{file_or_dir_to_open}? (Y/n) [exit]:", /[yn]/,control_flow_level)
+                input = input_prompt("Open #{file_or_dir_to_open}? (y/N) [exit]:", /[yn]/,control_flow_level)
               end
               
               if !isWindows?
-                system("open #{file_or_dir_to_open}") if input == 'y' || input == ""
+                system("open #{file_or_dir_to_open}") if input == 'y'
               else
-                system("powershell -command \"& { Invoke-Item '#{file_or_dir_to_open}' }\"")
+                system("powershell -command \"& { Invoke-Item '#{file_or_dir_to_open}' }\"") if input == 'y'
               end
-                
             end 
           end
           input_stack.shift
@@ -188,24 +187,28 @@ class RomLoader::RomLoaderCli
   def download_rom(game)
     file_or_dir_to_open = nil
     extract_dir = RomLoader::ArchiveExtractor.create_extract_dir(game)
-    puts "Downloading #{game.name} (#{game.size})..."
-    if isWindows?
-      result = Dir.chdir(extract_dir) { system("powershell -command \"& { Invoke-WebRequest '#{game.download_url}' -OutFile '#{game.filename}' }\"") }
+    if !File.exist?(File.join(extract_dir,game.filename))
+      puts "Downloading #{game.name} (#{game.size})..."
+      if isWindows?
+        result = Dir.chdir(extract_dir) { system("powershell -command \"& { Invoke-WebRequest '#{game.download_url}' -OutFile '#{game.filename}' }\"") }
+      else
+        result = Dir.chdir(extract_dir) { system("curl -Og# \"#{game.download_url}\"") }
+      end
+
+      if result && !isWindows? && game_obj.system.name != "MAME"
+        file_or_dir_to_open = RomLoader::ArchiveExtractor.extract(File.join(extract_dir,game.filename),extract_dir,game)
+      elsif result && !isWindows? && game_obj.system.name == "MAME"
+        puts "NOTE: No archive extraction. MAME roms must remain zipped to play."
+        file_or_dir_to_open = extract_dir
+      elsif result && isWindows?
+        file_or_dir_to_open = extract_dir
+      else
+        puts "An error occured, the rom couldn't be downloaded.\n"
+      end
     else
-      result = Dir.chdir(extract_dir) { system("curl -Og# \"#{game.download_url}\"") }
+      puts "File already exists."
     end
 
-    if result && !isWindows? && game_obj.system.name != "MAME"
-      file_or_dir_to_open = RomLoader::ArchiveExtractor.extract(File.join(extract_dir,game.filename),extract_dir,game)
-    elsif result && !isWindows? && game_obj.system.name == "MAME"
-      puts "NOTE: No archive extraction. MAME roms must remain zipped to play."
-      file_or_dir_to_open = extract_dir
-    elsif result && isWindows?
-      file_or_dir_to_open = extract_dir
-    else
-      puts "An error occured, the rom couldn't be downloaded.\n"
-    end
-    
     sleep 2
     file_or_dir_to_open
   end

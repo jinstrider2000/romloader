@@ -45,7 +45,7 @@ class RomLoader::ArchiveExtractor
   end
 
   def self.create_extract_dir(game_obj)
-    /(?<=\().+(?=\))/.match(game_obj.system.name) ? system_name = /(?<=\().+(?=\))/.match(game_obj.system.name)[0] : system_name = game_obj.system.name.rstrip.gsub(/[[[:space:]]\/]/, "_").downcase
+    /(?<=\().+(?=\))/.match(game_obj.system.name) ? system_name = /(?<=\().+(?=\))/.match(game_obj.system.name)[0].downcase : system_name = game_obj.system.name.rstrip.gsub(/[[[:space:]]\/]/, "_").downcase
     dir_w_system = File.join(Dir.home,"videogame_roms",system_name)
     Dir.mkdir(dir_w_system) unless Dir.exist?(dir_w_system)
     dir_w_system
