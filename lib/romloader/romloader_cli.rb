@@ -190,9 +190,9 @@ class RomLoader::RomLoaderCli
     extract_dir = RomLoader::ArchiveExtractor.create_extract_dir(game)
     puts "Downloading #{game.name} (#{game.size})..."
     if isWindows?
-      result = Dir.chdir(extract_dir)) { system("powershell -command \"& { Invoke-WebRequest '#{game.download_url}' -OutFile '#{game.filename}' }\"") }
+      result = Dir.chdir(extract_dir) { system("powershell -command \"& { Invoke-WebRequest '#{game.download_url}' -OutFile '#{game.filename}' }\"") }
     else
-      result = Dir.chdir(extract_dir)) { system("curl -Og# \"#{game.download_url}\"") }
+      result = Dir.chdir(extract_dir) { system("curl -Og# \"#{game.download_url}\"") }
     end
 
     if result && !isWindows? && game_obj.system.name != "MAME"
