@@ -27,6 +27,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/jinstr
 
 ## Version Changes
 
+v. 1.2.2: Updated web scraping function
+
 v. 1.2: Added basic file managment capability for Windows (requires Powershell v 3.0 or higher). Also updated UI slightly.
 
 v. 1.1: Added basic rom download capability for Windows (requires Powershell v 3.0 or higher)

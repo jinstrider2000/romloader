@@ -1,4 +1,3 @@
-
 # The class which facilitates scraping freeroms.com. Uses the nokogiri gem to scrape the site
 class RomLoader::FreeromsScraper
   
@@ -49,11 +48,11 @@ class RomLoader::FreeromsScraper
   def self.rom_details(url)
     
     direct_download = Nokogiri::HTML(open(url))
+
     {}.tap do |game|
-      unless direct_download.css("td#romss > script").empty?
-        game_name = direct_download.css("tr.gametitle > td[colspan=\"2\"]").text
+      if !direct_download.css("td#rom > script").empty?
         begin
-          game_url = /http:\/\/.+(\.zip|\.7z)/.match(direct_download.css("td#romss > script").first.children.first.text)
+          game_url = /http:\/\/.+(\.zip|\.7z)/.match(direct_download.css("td#rom > script").first.children.first.text)
         rescue NoMethodError
           
         else
@@ -68,6 +67,23 @@ class RomLoader::FreeromsScraper
             end    
           end      
         end
+      elsif !direct_download.css("script").empty?
+        begin
+          direct_download.css("script").each { |script| game_url = /http:\/\/.+(\.zip|\.7z)/.match(script.children.text) if /http:\/\/.+(\.zip|\.7z)/.match(script.children.text) }
+        rescue NoMethodError
+          
+        else
+          if game_url
+            game[:download_url] = game_url[0]
+            game[:file_ext] = game_url[1]
+            game[:filename] = /[.[^\/]]+(\.zip|\.7z)\Z/.match(game_url[0])[0]
+            begin
+              game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
+            rescue NoMethodError
+              game[:size] = "N/A"
+            end    
+          end
+        end  
       end
     end
   end
