@@ -48,7 +48,6 @@ class RomLoader::FreeromsScraper
   def self.rom_details(url)
     
     direct_download = Nokogiri::HTML(open(url))
-
     {}.tap do |game|
       if !direct_download.css("td#rom > script").empty?
         begin
@@ -61,7 +60,7 @@ class RomLoader::FreeromsScraper
             game[:file_ext] = game_url[1]
             game[:filename] = /[.[^\/]]+(\.zip|\.7z)\Z/.match(game_url[0])[0]
             begin
-              game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
+              game[:size] = direct_download.css("div.system-rom-tr-wrap > div.file-size").first.children.first.text.strip
             rescue NoMethodError
               game[:size] = "N/A"
             end    
@@ -78,7 +77,7 @@ class RomLoader::FreeromsScraper
             game[:file_ext] = game_url[1]
             game[:filename] = /[.[^\/]]+(\.zip|\.7z)\Z/.match(game_url[0])[0]
             begin
-              game[:size] = direct_download.css("td#rom + td[colspan=\"2\"]").first.children.first.text.strip
+              game[:size] = direct_download.css("div.system-rom-tr-wrap > div.file-size").first.children.first.text.strip
             rescue NoMethodError
               game[:size] = "N/A"
             end    

@@ -1,12 +1,12 @@
 Gem::Specification.new do |spec|
   spec.name = 'romloader'
-  spec.version = '1.2.2'
-  spec.date = '2016-10-23'
+  spec.version = '1.2.3'
+  spec.date = '2017-06-06'
   spec.summary = 'A videogame rom downloader powered by freeroms.com!'
   spec.description = "This gem allows you to convieniently download videogame roms from freeroms.com to your home directory."
   spec.author = ["Efrain Perez Jr"]
   spec.email = "efrainperezjr@live.com"
-  spec.homepage = "https://github.com/jinstrider2000/romloader-cli-gem"
+  spec.homepage = "https://github.com/jinstrider2000/romloader"
   spec.files = Dir.glob([File.join("lib","**","*.rb"),File.join("bin","romloader"),File.join("spec","**","*"),"LICENSE","README.md","Gemfile"])
   spec.require_paths = "lib"
   spec.platform = Gem::Platform::RUBY

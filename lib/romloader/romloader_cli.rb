@@ -1,10 +1,10 @@
-
+require 'pry'
 # The CLI class
 class RomLoader::RomLoaderCli
 
   def initialize
     RomLoader::GameSystem.create_from_collection(RomLoader::FreeromsScraper.system_scrape("http://freeroms.com"))
-    raise RomLoader::ScrapingError::NoElementFound.exception("System index is currently unavailable. Exiting the program.") if RomLoader::GameSystem.all.size == 0
+    raise RomLoader::ScrapingError::NoElementFound.exception("ERROR: Systems index is currently unavailable. Exiting the program.") if RomLoader::GameSystem.all.size == 0
   end
 
   # Starts the CLI, called in romloader.rb
@@ -12,7 +12,7 @@ class RomLoader::RomLoaderCli
     input_stack = []
     control_flow_level = 1
 
-    puts "Thanks for using RomLoader, powered by freeroms.com!\nNOTE: To play the games, please download an emulator for the desired system.\nConnecting to freeroms.com and retrieving the systems index...\n\n"
+    puts "\nThanks for using RomLoader, powered by freeroms.com!\nNOTE: To play the games, please download an emulator for the desired system.\nConnecting to freeroms.com and retrieving the systems index...\n\n"
     sleep 3
     while control_flow_level > 0 
       case control_flow_level
@@ -30,8 +30,10 @@ class RomLoader::RomLoaderCli
         list_system_index(system)
         if system.get_rom_indices.empty?
           begin
-            raise RomLoader::ScrapingError::NoElementFound.exception("Requested system is currently unavailable. Try another one.")
-          rescue
+            raise RomLoader::ScrapingError::NoElementFound.exception("ERROR: Requested system is currently unavailable. Try another one.")
+          rescue => e
+            puts "#{e.message}\n\n"
+            sleep 2
             control_flow_level -= 1
             input_stack.shift
           end 
@@ -43,8 +45,10 @@ class RomLoader::RomLoaderCli
         game_collection = select_game_collection_by_index(system,input_stack[0].upcase)
         if game_collection.empty?
           begin
-            raise RomLoader::ScrapingError::NoElementFound.exception("Requested game index is currently unavailable. Try another one.")
-          rescue
+            raise RomLoader::ScrapingError::NoElementFound.exception("ERROR: Requested game index is currently unavailable. Try another one.")
+          rescue => e
+            puts "#{e.message}\n\n"
+            sleep 2
             control_flow_level -= 1
             input_stack.shift
           end
@@ -57,8 +61,10 @@ class RomLoader::RomLoaderCli
         game = select_game(game_collection,input_stack[0].to_i)
         if game.download_url == nil
           begin
-            raise RomLoader::ScrapingError::NoElementFound.exception("Requested game is currently unavailable. Try another one.")
-          rescue
+            raise RomLoader::ScrapingError::NoElementFound.exception("ERROR: Requested game is currently unavailable. Try another one.")
+          rescue => e
+            puts "#{e.message}\n\n"
+            sleep 2
             control_flow_level -= 1
             input_stack.shift
           end
@@ -88,7 +94,7 @@ class RomLoader::RomLoaderCli
       end
     end
 
-    puts "Happy Gaming!"
+    puts "Happy Gaming!\n\n"
   end
 
   # Sets control_flow_level in RomLoaderCli#start, manipulates input_stack in RomLoaderCli#start
