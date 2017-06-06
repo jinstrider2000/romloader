@@ -26,6 +26,7 @@ This will download any dependencies for development. Rspec is among the dependen
 Bug reports and pull requests are welcome on GitHub at https://github.com/jinstrider2000/romloader-cli-gem.
 
 ## Version Changes
+v. 1.2.3: Updated error handling and scraping of file sizes from Freeroms.com
 
 v. 1.2.2: Updated web scraping function
 
