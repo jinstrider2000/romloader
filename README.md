@@ -14,7 +14,7 @@ Type the command below into your shell and follow the on screen prompts.
 
 ## Development
 
-To develop further upon this gem, fork and clone the repository located at https://github.com/jinstrider2000/romloader-cli-gem.
+To develop further upon this gem, fork and clone the repository located at https://github.com/jinstrider2000/romloader.
 Be sure to have the Bundler gem installed, and run:
 
     $ bundle install
@@ -23,7 +23,7 @@ This will download any dependencies for development. Rspec is among the dependen
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/jinstrider2000/romloader-cli-gem.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jinstrider2000/romloader.
 
 ## Version Changes
 v. 1.2.3: Updated error handling and scraping of file sizes from Freeroms.com
