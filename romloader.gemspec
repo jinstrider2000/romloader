@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name = 'romloader'
-  spec.version = '1.2.3'
-  spec.date = '2017-06-06'
+  spec.version = '1.2.4'
+  spec.date = '2017-06-08'
   spec.summary = 'A videogame rom downloader powered by freeroms.com!'
   spec.description = "This gem allows you to convieniently download videogame roms from freeroms.com to your home directory."
   spec.author = ["Efrain Perez Jr"]

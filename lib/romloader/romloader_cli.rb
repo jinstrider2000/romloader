@@ -1,4 +1,3 @@
-require 'pry'
 # The CLI class
 class RomLoader::RomLoaderCli
 
