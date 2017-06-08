@@ -26,11 +26,14 @@ This will download any dependencies for development. Rspec is among the dependen
 Bug reports and pull requests are welcome on GitHub at https://github.com/jinstrider2000/romloader.
 
 ## Version Changes
+
+v. 1.2.4: Fixed bug in regexp checking when entering single characters 
+
 v. 1.2.3: Updated error handling and scraping of file sizes from Freeroms.com
 
 v. 1.2.2: Updated web scraping function
 
-v. 1.2: Added basic file managment capability for Windows (requires Powershell v 3.0 or higher). Also updated UI slightly.
+v. 1.2: Added basic file managment capability for Windows (requires Powershell v 3.0 or higher). Also updated UI slightly
 
 v. 1.1: Added basic rom download capability for Windows (requires Powershell v 3.0 or higher)
 

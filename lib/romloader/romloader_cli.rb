@@ -38,7 +38,7 @@ class RomLoader::RomLoaderCli
             input_stack.shift
           end 
         else
-          input = input_prompt("Select a letter [back|exit]:", /[#{system.get_rom_indices.join.downcase}]/,control_flow_level)
+          input = input_prompt("Select a letter [back|exit]:", /\A[#{system.get_rom_indices.join.downcase}]{1}\Z/,control_flow_level)
           control_flow_level = flow_controller(input,control_flow_level,input_stack)
         end
       when 3
@@ -70,15 +70,15 @@ class RomLoader::RomLoaderCli
           end
         else
           display_rom_details(game)
-          input = input_prompt("Download? (Y/n) [exit]:", /[yn]/, control_flow_level)
+          input = input_prompt("Download? (Y/n) [exit]:", /\A[yn]{1}\Z/, control_flow_level)
           if input == 'y' || input == ""
             file_or_dir_to_open = download_rom(game)
             if file_or_dir_to_open
               if /\".+\"/.match(file_or_dir_to_open)
                 game_file = /\".+\"/.match(file_or_dir_to_open)[0]
-                input = input_prompt("Play #{game_file}? (y/N) [exit]:", /[yn]/,control_flow_level)
+                input = input_prompt("Play #{game_file}? (y/N) [exit]:", /\A[yn]{1}\Z/,control_flow_level)
               else
-                input = input_prompt("Open #{file_or_dir_to_open}? (y/N) [exit]:", /[yn]/,control_flow_level)
+                input = input_prompt("Open #{file_or_dir_to_open}? (y/N) [exit]:", /\A[yn]{1}\Z/,control_flow_level)
               end
               
               if !isWindows?
