@@ -1,9 +1,10 @@
+require 'pry'
 # The class which facilitates scraping freeroms.com. Uses the nokogiri gem to scrape the site
 class RomLoader::FreeromsScraper
   
   def self.system_scrape(url)
     
-    system_list = Nokogiri::HTML(open(url)).css("dt.leftside > a")
+    system_list = Nokogiri::HTML(open(url)).css("ul.desktop-menu > li > a")
     [].tap do |game_system|
       system_list.each do |system_info|
         if system_info.text != "Links" && system_info.text != "Flash Games" && system_info.text != ""
@@ -24,7 +25,7 @@ class RomLoader::FreeromsScraper
   # Returns this information in the form of an array of hashes
   def self.rom_scrape(url)
     
-    game_list = Nokogiri::HTML(open(url)).css("tr[class^=\"game\"] > td[align=\"left\"]")
+    game_list = Nokogiri::HTML(open(url)).css("div.rom-tr.title")
     [].tap do |rom_list|
       game_list.each do |game_info|
         begin
@@ -91,7 +92,7 @@ class RomLoader::FreeromsScraper
   # Returns this information in the form of a hash
   def self.rom_index_scrape(url)
     
-    rom_letter_list = Nokogiri::HTML(open(url)).css("tr.letters > td[align=\"center\"] > font > a")
+    rom_letter_list = Nokogiri::HTML(open(url)).css("div.page > a")
     {}.tap do |letter_hash|
       rom_letter_list.each do |letter_list|
         letter = letter_list.text.strip
