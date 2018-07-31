@@ -2,7 +2,7 @@
 class RomLoader::RomLoaderCli
 
   def initialize
-    RomLoader::GameSystem.create_from_collection(RomLoader::FreeromsScraper.system_scrape("http://freeroms.com"))
+    RomLoader::GameSystem.create_from_collection(RomLoader::FreeromsScraper.system_scrape("https://freeroms.com"))
     raise RomLoader::ScrapingError::NoElementFound.exception("ERROR: Systems index is currently unavailable. Exiting the program.") if RomLoader::GameSystem.all.size == 0
   end
 
