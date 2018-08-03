@@ -27,6 +27,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/jinstr
 
 ## Version Changes
 
+v. 1.2.6: Fixed system scraping functions to comply with updates to freeroms.com
+
 v. 1.2.5: Fixed system scraping functions to comply with updates to freeroms.com
 
 v. 1.2.4: Fixed bug in regexp checking when entering single characters 
