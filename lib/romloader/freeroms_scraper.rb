@@ -3,14 +3,14 @@ require 'pry'
 class RomLoader::FreeromsScraper
   
   def self.system_scrape(url)
-    
+    @@base_url = url;
     system_list = Nokogiri::HTML(open(url)).css("ul.desktop-menu > li > a")
     [].tap do |game_system|
       system_list.each do |system_info|
         if system_info.text != "Links" && system_info.text != "Flash Games" && system_info.text != ""
           system_name = system_info.text
           begin
-            system_rom_url = system_info.attribute("href").value
+            system_rom_url = "#{@@base_url}#{system_info.attribute("href").value}"
           rescue NoMethodError
             
           else
@@ -29,7 +29,7 @@ class RomLoader::FreeromsScraper
     [].tap do |rom_list|
       game_list.each do |game_info|
         begin
-          download_link = game_info.css("a").attribute("href").value
+          download_link = "#{@@base_url}#{game_info.css("a").attribute("href").value}"
         rescue NoMethodError
           
         else
@@ -97,7 +97,7 @@ class RomLoader::FreeromsScraper
       rom_letter_list.each do |letter_list|
         letter = letter_list.text.strip
         begin
-          letter_hash[letter] = letter_list.attribute("href").value if letter =~ /\A[A-Z#]\Z/
+          letter_hash[letter] = "#{@@base_url}#{letter_list.attribute("href").value}" if letter =~ /\A[A-Z#]\Z/
         rescue NoMethodError
 
         end
