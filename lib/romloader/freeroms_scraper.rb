@@ -1,4 +1,3 @@
-require 'pry'
 # The class which facilitates scraping freeroms.com. Uses the nokogiri gem to scrape the site
 class RomLoader::FreeromsScraper
   
